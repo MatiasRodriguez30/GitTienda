@@ -24,7 +24,7 @@ public class DataLoader implements CommandLineRunner {
         Category limpieza = new Category("Limpieza");
         Category mascotas = new Category("Mascotas");
         Category semillas = new Category("Semilla");
-        Cateogry accesorios = new Category("Accesorios de mascota");
+        Category accesorios = new Category("Accesorios de mascota");
         Category plasticos = new Category("Plasticos");
 
         categoryRepository.saveAll(Arrays.asList(gato, gatito, adulto, cachorro, limpieza, mascotas, semillas, accesorios, plasticos));
