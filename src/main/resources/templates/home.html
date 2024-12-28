@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Página Principal</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-5">
+    <h2>Bienvenido a la Página Principal</h2>
+    <p>Panel de Administración del local.</p>
+    <div class="mt-4">
+        <a href="/products" class="btn btn-primary">ABM Productos</a>
+        <a href="/products/grid" class="btn btn-info ml-2">Ver Productos</a>
+        <a href="/catalog" class="btn btn-success ml-2">Catálogo de Productos</a>
+        <a th:href="@{/logout}" class="btn btn-danger ml-2">Cerrar Sesión</a>
+    </div>
+</div>
+</body>
+</html>

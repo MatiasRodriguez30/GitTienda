@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Agregar Producto</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .custom-file-label::after {
+            content: "Seleccionar archivo";
+        }
+        .stock-controls {
+            display: flex;
+            align-items: center;
+        }
+        .stock-controls button {
+            margin: 0 5px;
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const fileInput = document.querySelector('.custom-file-input');
+            const fileLabel = document.querySelector('.custom-file-label');
+
+            fileInput.addEventListener('change', function() {
+                const fileName = fileInput.files[0].name;
+                fileLabel.textContent = fileName;
+            });
+
+            const decrementButton = document.getElementById('decrementStock');
+            const incrementButton = document.getElementById('incrementStock');
+            const stockInput = document.getElementById('stock');
+
+            decrementButton.addEventListener('click', function() {
+                const currentValue = parseInt(stockInput.value);
+                if (currentValue > 0) {
+                    stockInput.value = currentValue - 1;
+                }
+            });
+
+            incrementButton.addEventListener('click', function() {
+                const currentValue = parseInt(stockInput.value);
+                stockInput.value = currentValue + 1;
+            });
+        });
+    </script>
+</head>
+<body>
+<div class="container mt-5">
+    <h1 class="mb-4">Agregar Producto</h1>
+    <form th:action="@{/products/add}" th:object="${product}" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="name">Nombre:</label>
+            <input type="text" id="name" class="form-control" th:field="*{name}"/>
+        </div>
+        <div class="form-group">
+            <label for="price">Precio:</label>
+            <input type="number" id="price" class="form-control" th:field="*{price}"/>
+        </div>
+        <div class="form-group">
+            <label for="pricePerKilo">Precio por Kilo (opcional):</label>
+            <input type="number" id="pricePerKilo" class="form-control" th:field="*{pricePerKilo}"/>
+        </div>
+        <div class="form-group">
+            <label for="description">Descripción:</label>
+            <input type="text" id="description" class="form-control" th:field="*{description}"/>
+        </div>
+        <div class="form-group">
+            <label for="imageFile">Imagen:</label>
+            <div class="custom-file">
+                <input type="file" class="custom-file-input" id="imageFile" name="imageFile">
+                <label class="custom-file-label" for="imageFile"></label>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="stock">Stock:</label>
+            <div class="stock-controls">
+                <button type="button" id="decrementStock" class="btn btn-secondary">-</button>
+                <input type="number" id="stock" class="form-control" th:field="*{stock}" style="width: 100px; text-align: center;"/>
+                <button type="button" id="incrementStock" class="btn btn-secondary">+</button>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="availability">Disponibilidad:</label>
+            <select id="availability" class="form-control" th:field="*{availability}">
+                <option th:each="availability : ${T(com.example.TiendaInventario.Entities.Availability).values()}"
+                        th:value="${availability}"
+                        th:text="${availability}">
+                </option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="categories">Categorías:</label>
+            <select id="categories" class="form-control" name="categoryIds" multiple>
+                <option th:each="category : ${categories}"
+                        th:value="${category.id}"
+                        th:text="${category.name}">
+                </option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Agregar Producto</button>
+        <a href="/products" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+</body>
+</html>
