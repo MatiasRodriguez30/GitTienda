@@ -10,6 +10,9 @@ COPY build.gradle /app
 # Copiar el resto de la aplicación al contenedor
 COPY . /app
 
+# Asegurarse de que gradlew tenga permisos de ejecución
+RUN chmod +x gradlew
+
 # Descargar todas las dependencias y construir la aplicación
 RUN ./gradlew build --no-daemon
 
