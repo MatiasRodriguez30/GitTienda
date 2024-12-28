@@ -23,4 +23,4 @@ ENV PORT 8080
 EXPOSE $PORT
 
 # Ejecutar la aplicación
-ENTRYPOINT ["java", "-jar", "/app/build/libs/TiendaInventarioApplication.jar"]
+ENTRYPOINT ["java", "-jar", "/app/build/libs/TiendaInventario-0.0.1-SNAPSHOT.jar"]
