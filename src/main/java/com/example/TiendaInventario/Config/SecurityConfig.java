@@ -32,8 +32,8 @@ public class SecurityConfig {
     public UserDetailsService userDetailsService() {
         var userDetailsManager = new InMemoryUserDetailsManager();
         userDetailsManager.createUser(User.withDefaultPasswordEncoder()
-                .username("admin")
-                .password("admin")
+                .username("takana")
+                .password("simon2019")
                 .roles("ADMIN")
                 .build());
         return userDetailsManager;
