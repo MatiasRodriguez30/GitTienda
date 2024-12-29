@@ -17,8 +17,10 @@ public class Product {
     private Long id;
     private String name;
     private Double price;
+    private Double pricePerKilo; // Asegúrate de que este campo esté definido
     private String description;
-    private String image;
+    private String image; // Nombre del archivo de imagen subido
+    private String imageUrl; // URL de la imagen si se proporciona
     private Integer stock;
     @Enumerated(EnumType.STRING)
     private Availability availability;
@@ -30,6 +32,4 @@ public class Product {
             inverseJoinColumns = @JoinColumn(name = "category_id")
     )
     private List<Category> categories;
-
-    private Double pricePerKilo; // Nuevo campo opcional
 }
