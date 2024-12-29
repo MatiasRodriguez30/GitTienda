@@ -96,6 +96,7 @@
     <div class="product-grid">
         <div th:each="product : ${products}" class="product-card card">
             <img th:if="${product.image}" th:src="@{/uploads/{image}(image=${product.image})}" class="card-img-top" alt="Product Image">
+            <img th:if="${product.imageUrl}" th:src="${product.imageUrl}" class="card-img-top" alt="Product Image">
             <div class="card-body">
                 <h5 class="card-title" th:text="${product.name}"></h5>
                 <p class="card-text" th:text="${product.description}"></p>
