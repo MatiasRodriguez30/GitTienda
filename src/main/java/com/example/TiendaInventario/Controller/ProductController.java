@@ -89,17 +89,24 @@ public class ProductController {
                 .map(Optional::get)
                 .collect(Collectors.toList());
         product.setCategories(categories);
+
         if (!imageFile.isEmpty()) {
             try {
                 String fileName = imageFile.getOriginalFilename();
-                Path filePath = Paths.get(uploadDir, fileName);
-                Files.createDirectories(filePath.getParent()); // Asegúrate de que el directorio exista
+                Path uploadPath = Paths.get(uploadDir);
+                if (!Files.exists(uploadPath)) {
+                    Files.createDirectories(uploadPath);
+                }
+                Path filePath = uploadPath.resolve(fileName);
                 Files.write(filePath, imageFile.getBytes());
                 product.setImage(fileName);
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        } else if (product.getImageUrl() != null && !product.getImageUrl().isEmpty()) {
+            product.setImage(null); // No se subió un archivo, usar la URL proporcionada
         }
+
         productService.saveProduct(product);
         return "redirect:/products";
     }
@@ -120,20 +127,25 @@ public class ProductController {
                 .map(Optional::get)
                 .collect(Collectors.toList());
         product.setCategories(categories);
+
         if (!imageFile.isEmpty()) {
             try {
                 String fileName = imageFile.getOriginalFilename();
-                Path filePath = Paths.get(uploadDir, fileName);
+                Path uploadPath = Paths.get(uploadDir);
+                if (!Files.exists(uploadPath)) {
+                    Files.createDirectories(uploadPath);
+                }
+                Path filePath = uploadPath.resolve(fileName);
                 Files.write(filePath, imageFile.getBytes());
                 product.setImage(fileName);
+                product.setImageUrl(null); // Si se sube un archivo, eliminar la URL
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        } else {
-            // Mantener la imagen existente si no se selecciona una nueva
-            Product existingProduct = productService.getProductById(id).orElseThrow(() -> new IllegalArgumentException("Invalid product Id:" + id));
-            product.setImage(existingProduct.getImage());
+        } else if (product.getImageUrl() != null && !product.getImageUrl().isEmpty()) {
+            product.setImage(null); // No se subió un archivo, usar la URL proporcionada
         }
+
         product.setId(id);
         productService.saveProduct(product);
         return "redirect:/products";
