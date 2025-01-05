@@ -52,13 +52,13 @@
         <tr>
             <th>ID</th>
             <th>Nombre</th>
+            <th>Categorías</th>
             <th>Precio</th>
             <th>Precio por Kilo</th>
             <th>Descripción</th>
             <th>Imagen</th>
             <th>Stock</th>
             <th>Disponibilidad</th>
-            <th>Categorías</th>
             <th>Acciones</th>
         </tr>
         </thead>
@@ -66,11 +66,16 @@
         <tr th:each="product : ${products}">
             <td th:text="${product.id}"></td>
             <td th:text="${product.name}"></td>
+            <td>
+                <div th:each="category : ${product.categories}">
+                    <span class="badge badge-primary category-badge" th:text="${category.name}"></span>
+                </div>
+            </td>
             <td th:text="${product.price}"></td>
             <td th:text="${product.pricePerKilo != null} ? ${product.pricePerKilo} : 'N/A'"></td>
             <td th:text="${product.description}"></td>
             <td>
-                <img th:if="${product.image}" th:src="@{/uploads/{image}(image=${product.image})}" alt="Imagen del Producto" style="width: 50px; height: 50px;" />
+                <img th:if="${product.image}" th:src="@{/images/{image}(image=${product.image})}" alt="Imagen del Producto" style="width: 50px; height: 50px;" />
                 <img th:if="${product.imageUrl}" th:src="${product.imageUrl}" alt="Imagen del Producto" style="width: 50px; height: 50px;" />
             </td>
             <td class="stock-controls">
@@ -83,11 +88,6 @@
                 </form>
             </td>
             <td th:text="${product.availability}"></td>
-            <td>
-                <div th:each="category : ${product.categories}">
-                    <span class="badge badge-primary category-badge" th:text="${category.name}"></span>
-                </div>
-            </td>
             <td>
                 <a th:href="@{/products/edit/{id}(id=${product.id})}" class="btn btn-warning btn-sm">Editar</a>
                 <a th:href="@{/products/delete/{id}(id=${product.id})}" class="btn btn-danger btn-sm">Eliminar</a>
