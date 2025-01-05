@@ -1,9 +1,19 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Catálogo de Productos</title>
+    <title>Catálogo de Productos - Takana</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
     <style>
+        body {
+            background-color: #f9f9f9;
+            font-family: 'Fredoka One', cursive;
+        }
+        h1 {
+            color: #ff6f61;
+            text-align: center;
+            margin-bottom: 30px;
+        }
         .product-grid {
             display: flex;
             flex-wrap: wrap;
@@ -11,76 +21,92 @@
             justify-content: center;
         }
         .product-card {
-            border: 1px solid #ddd;
-            border-radius: 8px;
+            border: none;
+            border-radius: 12px;
             overflow: hidden;
-            width: 200px;
+            width: 220px;
             text-align: center;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .product-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
         }
         .product-card img {
             width: 100%;
-            height: 150px;
+            height: 160px;
             object-fit: cover;
+            border-bottom: 2px solid #ff6f61;
         }
         .product-card .card-body {
-            padding: 10px;
+            padding: 15px;
         }
         .product-card .card-title {
-            font-size: 14px;
-            margin-bottom: 5px;
+            font-size: 18px;
+            color: #333;
         }
         .product-card .card-text {
-            font-size: 12px;
+            font-size: 14px;
             color: #555;
         }
         .product-card .price {
-            font-size: 16px;
+            font-size: 20px;
             font-weight: bold;
-            color: #333;
-        }
-        .product-card .actions {
-            margin-top: 10px;
-        }
-        .product-card .actions a {
-            margin: 0 5px;
+            color: #ff6f61;
         }
         .whatsapp-button {
             background-color: #25D366;
             color: white;
             border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
+            padding: 12px 25px;
+            border-radius: 50px;
             font-size: 16px;
-            display: flex;
-            align-items: center;
+            text-align: center;
             text-decoration: none;
             position: fixed;
             bottom: 20px;
             right: 20px;
+            display: flex;
+            align-items: center;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
         .whatsapp-button img {
             margin-right: 10px;
-            width: 24px;
-            height: 24px;
+            width: 28px;
+            height: 28px;
+        }
+        .modal-product img {
+            max-width: 100%;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        .whatsapp-modal-button {
+            background-color: #25D366;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            text-decoration: none;
         }
     </style>
 </head>
 <body>
 <div class="container mt-5">
-    <h1 class="mb-4">Catálogo de Productos</h1>
-    <div class="mb-3">
+    <h1>Catálogo de Productos 🐾</h1>
+    <div class="mb-4">
         <form th:action="@{/catalog}" method="get">
             <div class="input-group">
-                <input type="text" name="query" class="form-control" placeholder="Buscar por nombre">
+                <input type="text" name="query" class="form-control" placeholder="Buscar por nombre...">
                 <div class="input-group-append">
                     <button class="btn btn-primary" type="submit">Buscar</button>
                 </div>
             </div>
         </form>
     </div>
-    <div class="mb-3">
+    <div class="mb-4">
         <form th:action="@{/catalog}" method="get">
             <div class="input-group">
                 <select name="categoryId" class="form-control">
@@ -94,21 +120,39 @@
         </form>
     </div>
     <div class="product-grid">
-        <div th:each="product : ${products}" class="product-card card">
-            <img th:if="${product.image}" th:src="@{/uploads/{image}(image=${product.image})}" class="card-img-top" alt="Product Image">
-            <img th:if="${product.imageUrl}" th:src="${product.imageUrl}" class="card-img-top" alt="Product Image">
+        <div th:each="product : ${products}" class="product-card card" data-toggle="modal" th:data-target="'#productModal' + ${product.id}">
+            <img th:if="${product.image}" th:src="@{/uploads/{image}(image=${product.image})}" alt="Product Image">
+            <img th:if="${product.imageUrl}" th:src="${product.imageUrl}" alt="Product Image">
             <div class="card-body">
                 <h5 class="card-title" th:text="${product.name}"></h5>
                 <p class="card-text" th:text="${product.description}"></p>
-                <p class="price"><span th:text="${product.price}"></span></p>
-                <p class="price-per-kilo" th:if="${product.pricePerKilo != null}"><span>Precio por Kilo: </span><span th:text="${product.pricePerKilo}"></span></p>
-                <p class="stock"><span>Stock: </span><span th:text="${product.stock}"></span></p>
-                <p class="availability"><span>Disponibilidad: </span><span th:text="${product.availability}"></span></p>
-                <div class="categories">
-                    <span>Categorías:</span>
-                    <div th:each="category : ${product.categories}">
-                        <span class="badge badge-primary category-badge" th:text="${category.name}"></span>
-                    </div>
+                <p class="price">$<span th:text="${product.price}"></span></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para ver el producto en grande -->
+<div th:each="product : ${products}">
+    <div class="modal fade" th:id="'productModal' + ${product.id}" tabindex="-1" role="dialog" aria-labelledby="productModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="productModalLabel" th:text="${product.name}"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <img th:if="${product.image}" th:src="@{/uploads/{image}(image=${product.image})}" class="modal-product">
+                    <h4>Descripción</h4>
+                    <p th:text="${product.description}"></p>
+                    <h4>Precio</h4>
+                    <p>$<span th:text="${product.price}"></span></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    <a href="https://wa.me/2615586001?text=Hola,%20me%20interesa%20el%20producto%20" th:text="'Hola, me interesa el producto ' + ${product.name}" class="whatsapp-modal-button" target="_blank">Pedir por WhatsApp</a>
                 </div>
             </div>
         </div>
@@ -121,5 +165,8 @@
     Contáctanos por WhatsApp
 </a>
 
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
