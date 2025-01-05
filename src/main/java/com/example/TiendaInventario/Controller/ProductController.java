@@ -99,12 +99,10 @@ public class ProductController {
                 }
                 Path filePath = uploadPath.resolve(fileName);
                 Files.write(filePath, imageFile.getBytes());
-                product.setImage(fileName);
+                product.setImageUrl("/images/" + fileName); // Guardar la URL de la imagen
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        } else if (product.getImageUrl() != null && !product.getImageUrl().isEmpty()) {
-            product.setImage(null); // No se subió un archivo, usar la URL proporcionada
         }
 
         productService.saveProduct(product);
@@ -137,13 +135,11 @@ public class ProductController {
                 }
                 Path filePath = uploadPath.resolve(fileName);
                 Files.write(filePath, imageFile.getBytes());
-                product.setImage(fileName);
-                product.setImageUrl(null); // Si se sube un archivo, eliminar la URL
+                product.setImageUrl("/images/" + fileName); // Guardar la URL de la imagen
+                product.setImage(null); // Si se sube un archivo, eliminar el nombre del archivo
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        } else if (product.getImageUrl() != null && !product.getImageUrl().isEmpty()) {
-            product.setImage(null); // No se subió un archivo, usar la URL proporcionada
         }
 
         product.setId(id);
