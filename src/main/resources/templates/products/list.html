@@ -1,17 +1,27 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="es">
 <head>
-    <title>Lista de Productos</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Productos</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        .category-badge {
-            margin-right: 5px;
-            margin-bottom: 5px;
+        body {
+            background-color: #f8f9fa;
         }
-        .stock-controls {
-            display: flex;
-            align-items: center;
+        .table-header {
+            background-color: #343a40;
+            color: white;
+        }
+        .product-image {
+            width: 70px;
+            height: 70px;
+            object-fit: cover;
+        }
+        .badge-category {
+            font-size: 0.85rem;
+            margin-right: 5px;
         }
         .stock-controls button {
             margin: 0 5px;
@@ -19,42 +29,39 @@
     </style>
 </head>
 <body>
-<div class="container mt-5">
-    <h1 class="mb-4">Lista de Productos</h1>
-    <a href="/products/grid" class="btn btn-info mb-3">Ver Cuadrícula de Productos</a>
-    <div class="mb-3">
-        <form th:action="@{/products}" method="get">
-            <div class="input-group">
-                <input type="text" name="query" class="form-control" placeholder="Buscar por nombre">
-                <div class="input-group-append">
-                    <button class="btn btn-primary" type="submit">Buscar</button>
-                </div>
-            </div>
-        </form>
-    </div>
-    <div class="mb-3">
-        <form th:action="@{/products}" method="get">
-            <div class="input-group">
-                <select name="categoryId" class="form-control">
-                    <option value="">Todas las Categorías</option>
+<div class="container py-5">
+    <h1 class="text-center mb-4">Gestión de Productos</h1>
+
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <form class="input-group" method="get" th:action="@{/products}">
+                <input type="text" class="form-control" placeholder="Buscar por nombre" name="query">
+                <button class="btn btn-primary" type="submit"><i class="fas fa-search"></i></button>
+            </form>
+        </div>
+        <div class="col-md-4">
+            <form class="input-group" method="get" th:action="@{/products}">
+                <select class="form-select" name="categoryId">
+                    <option value="">Todas las categorías</option>
                     <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
                 </select>
-                <div class="input-group-append">
-                    <button class="btn btn-primary" type="submit">Filtrar</button>
-                </div>
-            </div>
-        </form>
+                <button class="btn btn-secondary" type="submit"><i class="fas fa-filter"></i> Filtrar</button>
+            </form>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="/products/add" class="btn btn-success"><i class="fas fa-plus"></i> Agregar Producto</a>
+            <button class="btn btn-secondary" onclick="history.back()"><i class="fas fa-arrow-left"></i> Volver</button>
+        </div>
     </div>
-    <a href="/products/add" class="btn btn-primary mb-3">Agregar Nuevo Producto</a>
-    <button class="btn btn-secondary mb-3" onclick="history.back()">Volver</button>
-    <table class="table table-bordered table-hover table-responsive-sm">
-        <thead class="thead-dark">
+
+    <table class="table table-bordered table-hover">
+        <thead class="table-header">
         <tr>
             <th>ID</th>
             <th>Nombre</th>
             <th>Categorías</th>
             <th>Precio</th>
-            <th>Precio por Kilo</th>
+            <th>Precio/Kg</th>
             <th>Descripción</th>
             <th>Imagen</th>
             <th>Stock</th>
@@ -67,34 +74,38 @@
             <td th:text="${product.id}"></td>
             <td th:text="${product.name}"></td>
             <td>
-                <div th:each="category : ${product.categories}">
-                    <span class="badge badge-primary category-badge" th:text="${category.name}"></span>
-                </div>
+                <span class="badge bg-info text-dark badge-category" th:each="category : ${product.categories}" th:text="${category.name}"></span>
             </td>
             <td th:text="${product.price}"></td>
             <td th:text="${product.pricePerKilo != null} ? ${product.pricePerKilo} : 'N/A'"></td>
             <td th:text="${product.description}"></td>
             <td>
-                <img th:if="${product.image}" th:src="@{/images/{image}(image=${product.image})}" alt="Imagen del Producto" style="width: 50px; height: 50px;" />
-                <img th:if="${product.imageUrl}" th:src="${product.imageUrl}" alt="Imagen del Producto" style="width: 50px; height: 50px;" />
+                <img th:if="${product.image}" th:src="@{/images/{image}(image=${product.image})}" alt="Imagen del Producto" class="rounded product-image">
+                <img th:if="${product.imageUrl}" th:src="${product.imageUrl}" alt="Imagen del Producto" class="rounded product-image">
             </td>
-            <td class="stock-controls">
-                <form th:action="@{/products/decrementStock/{id}(id=${product.id})}" method="post" style="display: inline;">
-                    <button type="submit" class="btn btn-secondary btn-sm">-</button>
-                </form>
-                <span th:text="${product.stock}"></span>
-                <form th:action="@{/products/incrementStock/{id}(id=${product.id})}" method="post" style="display: inline;">
-                    <button type="submit" class="btn btn-secondary btn-sm">+</button>
-                </form>
+            <td>
+                <div class="d-flex align-items-center stock-controls">
+                    <form th:action="@{/products/decrementStock/{id}(id=${product.id})}" method="post" style="display: inline;">
+                        <button type="submit" class="btn btn-outline-danger btn-sm"><i class="fas fa-minus"></i></button>
+                    </form>
+                    <span th:text="${product.stock}" class="mx-2"></span>
+                    <form th:action="@{/products/incrementStock/{id}(id=${product.id})}" method="post" style="display: inline;">
+                        <button type="submit" class="btn btn-outline-success btn-sm"><i class="fas fa-plus"></i></button>
+                    </form>
+                </div>
             </td>
             <td th:text="${product.availability}"></td>
             <td>
-                <a th:href="@{/products/edit/{id}(id=${product.id})}" class="btn btn-warning btn-sm">Editar</a>
-                <a th:href="@{/products/delete/{id}(id=${product.id})}" class="btn btn-danger btn-sm">Eliminar</a>
+                <div class="btn-group">
+                    <a th:href="@{/products/edit/{id}(id=${product.id})}" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i> Editar</a>
+                    <a th:href="@{/products/delete/{id}(id=${product.id})}" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> Eliminar</a>
+                </div>
             </td>
         </tr>
         </tbody>
     </table>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
 </body>
 </html>
